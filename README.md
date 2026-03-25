@@ -11,6 +11,36 @@
 2.  소스 코드를 컴파일 후 실행한다.
 3.  생성된 'PeopleOnStreet_1280x720_30_ExtractY'와 'PeopleOnStreet_1280x720_30_Original.yuv'를  YUV_viewer에서 사양에 맞춰 재생하고 결과물을 비교한다.
 
+### 코드 해설
+이 프로세스의 핵심적인 코드는 양자화 파트 지정과 양자화 작업진행 일것인다.
+		for (int y = 0; y < length; y++) {
+			for (int x = 0; x < width; x++) {
+				if(!(x >= roi_x1 && x <= roi_x2 && y >= roi_y1 && y <= roi_y2)) {
+					// 8x8 블록의 시작점 좌표를 찾아서 그 값을 대입 (모자이크 효과)
+					int block_y = (y / 8) * 8;
+					int block_x = (x / 8) * 8;
+					buffer[y * width + x] = buffer[block_y * width + block_x];
+
+				}
+			}
+      해당 코드에서 if(!(x >= roi_x1 && x <= roi_x2 && y >= roi_y1 && y <= roi_y2))은 상당히 난해한 조건식을 가지고 있지만
+      내가 선명하게 보기 원하는 이미지 구역을 1280*720 해상도에서 지정하는 식과 같다. 
+
+      그 다음으로 이 코드에 핵심인 
+
+          int block_y = (y / 8) * 8;
+					int block_x = (x / 8) * 8;
+					buffer[y * width + x] = buffer[block_y * width + block_x];
+
+이 부분은 간단하다 block_x,block_y는 약분 후 곱을 통해 항상 "좌상단의 픽셀위치"로 고정시키는 역할을 맡는다. 
+buffer[y * width + x] = buffer[block_y * width + block_x]; 
+이부분은 YUV의 바이너리 파일 특성을 이용해 레스터 스캔 방식을 채용했다.
+1행에서 2행을 넘어가기 위해서는 1행의 열 개수만큼 순차적으로 이동하는 방식이다.
+
+<img width="1587" height="1427" alt="image" src="https://github.com/user-attachments/assets/c1fb4bf1-3955-4b0a-8e6a-136354e5af5b" />
+
+<C코드에 구현된 레스터 스캔 예시>
+
 
 ### 실험 결과 분석
 
