@@ -44,6 +44,16 @@ int main()
 	for (int i = 0; i < 30; i++) {
 		if (fread(buffer, 1, frameSize, org) < frameSize) break; // 버퍼 복사 프레임 무결성 확인
 
+		// 1. [검증용] ROI 내부 데이터 출력 (첫 프레임에서)
+		if (i == 0) {
+			printf("\n[ROI 내부 - 원본 선명한 구간 (600, 300) 8x8]\n");
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					printf("%3d ", buffer[(300 + row) * width + (600 + col)]);
+				}
+				printf("\n");
+			}
+		}
 
 		for (int y = 0; y < length; y++) {
 			for (int x = 0; x < width; x++) {
@@ -52,7 +62,20 @@ int main()
 					int block_y = (y / 8) * 8;
 					int block_x = (x / 8) * 8;
 					buffer[y * width + x] = buffer[block_y * width + block_x];
+
 				}
+			}
+
+		}
+
+		// 2. [검증용] ROI 외부(모자이크) 데이터 딱 한 번만 출력 (첫 프레임에서)
+		if (i == 0) {
+			printf("\n[ROI 외부 - 모자이크 처리된 구간 (100, 100) 8x8]\n");
+			for (int row = 0; row < 8; row++) {
+				for (int col = 0; col < 8; col++) {
+					printf("%3d ", buffer[(100 + row) * width + (100 + col)]);
+				}
+				printf("\n");
 			}
 		}
 		fwrite(buffer, 1, frameSize, copy);
