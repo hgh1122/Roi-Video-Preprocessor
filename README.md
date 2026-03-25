@@ -65,6 +65,11 @@
 
 
 
+
+
+
+
+
 당연하게도 원래 yuv파일의 크기는 바뀐점이 없다, 하지만 압축을 하였을때는 양자화 작업의 효과가 나타난다.
 
 <img width="769" height="81" alt="image" src="https://github.com/user-attachments/assets/947762dd-e018-43f3-8ec6-3af4756a054a" />
